@@ -1,0 +1,85 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ titre_page }}</title>
+    <link rel="stylesheet" href="{% static 'skills_shop/style.css' %}" />
+  </head>
+  <body>
+    <h1>{{titre_page}}</h1>
+    <h2>Skills</h2>
+    <ul>
+      {% for skill in skills %}
+      <li>{{ skill }}</li>
+      {% endfor %}
+    </ul>
+    <h2>Slots</h2>
+    <div id="button-container">
+      <button id="btn-demande">Demander de l'aide</button>
+      <button id="btn-demandes">Demandes</button>
+    </div>
+    <div id="modal-demande" class="modal-overlay hidden">
+      <div class="modal">
+        <button class="modal-close" id="modal-close">&times;</button>
+        <h2>Demander de l'aide</h2>
+        <form method="post" action="{% url 'creer_demande' %}">
+          {% csrf_token %}
+          <label for="activite">Activité</label>
+          <textarea name="activite" id="activite" required></textarea>
+
+          <label for="competence">Compétence recherchée</label>
+          <select name="competence" id="competence">
+            {% for skill in skills_manquantes %}
+            <option value="{{ skill.id }}">{{ skill.nom }}</option>
+            {% endfor %}
+          </select>
+
+          <label for="creneau">Créneau</label>
+          <input type="datetime-local" name="creneau" id="creneau" required />
+
+          <button type="submit">Valider</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="modal-liste-demandes" class="modal-overlay hidden">
+      <div class="modal modal-large">
+        <button class="modal-close" id="modal-close-liste">&times;</button>
+        <h2>Demandes où tu peux aider</h2>
+
+        <ul id="liste-demandes" class="liste-demandes">
+          {% for demande in demandes_disponibles %}
+          <li data-demande-id="{{ demande.id }}">
+            <div class="demande-info">
+              <strong>{{ demande.activite }}</strong>
+              <span class="demande-skill">{{ demande.competence.nom }}</span>
+              <span class="demande-creneau">{{ demande.creneau|date:"d/m/Y H:i" }}</span>
+              <span class="demande-auteur">par {{ demande.utilisateur.username }}</span>
+            </div>
+            <form method="post" action="{% url 'se_rendre_disponible' demande.id %}" class="form-dispo">
+              {% csrf_token %}
+              <button type="submit">Je suis dispo</button>
+            </form>
+          </li>
+          {% empty %}
+          <li class="liste-vide">Aucune demande correspondant à tes compétences pour le moment.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <script>
+      function setupModal(btnId, modalId, closeId) {
+        const btn = document.getElementById(btnId);
+        const modal = document.getElementById(modalId);
+        const closeBtn = document.getElementById(closeId);
+
+        btn.addEventListener("click", () => modal.classList.remove("hidden"));
+        closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
+      }
+
+      setupModal("btn-demande", "modal-demande", "modal-close");
+      setupModal("btn-demandes", "modal-liste-demandes", "modal-close-liste");
+    </script>
+  </body>
+</html>

@@ -1,0 +1,38 @@
+@startuml eval
+
+class Person {
+    String firstName
+    String lastName
+}
+
+class Visitor {
+    String state
+}
+
+class User  {
+    String state
+    String email
+    ArrayList<String> skills
+}
+
+class Skill {
+    String name
+    String category
+}
+
+class Slot {
+    Date startDate
+    Date endDate
+    int duration
+}
+
+class Company {
+    String name
+}
+
+
+Person <|-- User
+Person <|-- Visitor
+
+
+@enduml

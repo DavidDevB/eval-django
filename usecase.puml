@@ -1,0 +1,25 @@
+@startuml eval
+
+
+actor :Visitor:
+actor :User:
+
+package App {
+    :Visitor: --> (Display slots which a user decided to help for)
+    :Visitor: --> (Display of all skills available)
+    :User: --> (Connection)
+    :User: --> (Choose skill to offer)
+    :User: --> (Display available slots)
+    :User: --> (Choose a slot to be helped with the corresponding skill)
+    :User: --> (Choose a slot which User2 needs help for, with the previously chosen skill by User)
+    :User: --> (Display slots which another User is available for and corresponding with a slot he previously chose)
+}
+
+skinparam actorStyle awesome
+
+
+
+
+@enduml
+
+
