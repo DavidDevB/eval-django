@@ -4,7 +4,7 @@ from .models import Demande
 class DemandeForm(forms.ModelForm):
     class Meta:
         model = Demande
-        fields = ['activite', 'competence', 'creneau']
+        fields = ['activity', 'skill', 'slot']
         widgets = {
-            'creneau': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'slot': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
