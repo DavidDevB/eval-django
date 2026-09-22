@@ -2,25 +2,35 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.decorators.http import require_http_methods
-from .forms import DemandeForm
+from .forms import QueryForm
 from .models import Query, Skill
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
 
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/signup.html', {'form': form})
 
 @require_http_methods(["GET"])
 def index(request):
     skills = Skill.objects.all()
-    contexte = { 'skills': skills, 'demandes_disponibles': [] }
+    contexte = { 'skills': skills, 'available_queries': [] }
     return render(request, 'index.html', contexte)
 
 @login_required
 def creer_demande(request):
     if request.method == 'POST':
-        form = DemandeForm(request.POST)
+        form = QueryForm(request.POST)
         if form.is_valid():
-            demande = form.save(commit=False)
-            demande.user = request.user
-            demande.save()
+            query = form.save(commit=False)
+            query.user = request.user
+            query.save()
     return redirect('index')
 
 @require_http_methods(["GET"])
