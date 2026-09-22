@@ -9,6 +9,7 @@ class User(models.Model):
 
 class Skill(models.Model):
     name = models.CharField(max_length=20)
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='skills', blank=True)
 
     def __str__(self):
         return self.name
@@ -21,3 +22,10 @@ class Query(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='queries', null=True, blank=True
     )
+    accepted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, related_name='accepted_queries', null=True, blank=True
+    )
+
+    @property
+    def is_accepted(self):
+        return self.accepted_by is not None
