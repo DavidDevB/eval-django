@@ -3,13 +3,14 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.decorators.http import require_http_methods
 from .forms import DemandeForm
-from .models import Demande
+from .models import Demande, Skill
 from django.contrib.auth.decorators import login_required
 
 
 @require_http_methods(["GET"])
 def index(request):
-    contexte = { 'skills': ['development', 'cooking', 'writing', 'painting'], 'skills_manquantes': ['gardening', 'singing', 'dancing'], 'demandes_disponibles': [] }
+    skills = Skill.objects.all()
+    contexte = { 'skills': skills, 'demandes_disponibles': [] }
     return render(request, 'index.html', contexte)
 
 @login_required
