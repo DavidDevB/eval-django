@@ -14,5 +14,3 @@ class Demande(models.Model):
     activity = models.CharField(max_length=200)
     skill = models.CharField(max_length=15)
     slot = models.DateTimeField()
-
-
