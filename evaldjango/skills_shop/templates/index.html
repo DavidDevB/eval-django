@@ -9,7 +9,14 @@
   <body>
     <div id="title_login_div">
       <h1>Skills Shop</h1>
+      {% if user.is_authenticated %}
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Se déconnecter</button>
+      </form>
+      {% else %}
       <button><a href="{% url 'login' %}">Se connecter</a></button>
+      {% endif %}
     </div>
     <div id="border_bottom_title"></div>
     <h2>Skills</h2>
@@ -18,11 +25,15 @@
       <li><a href="{% url 'select_skill' skill %}">{{ skill }}</a></li>
       {% endfor %}
     </ul>
+    {% if user.is_authenticated %}
     <h2>Slots</h2>
     <div id="button-container">
       <button id="btn-demande">Demander de l'aide</button>
       <button id="btn-demandes">Demandes</button>
     </div>
+    {% else %}
+    <p id="veuillez">Veuillez vous connecter pour accéder aux fonctionnalités.</p>
+    {% endif %}
     <div id="modal-demande" class="modal-overlay hidden">
       <div class="modal">
         <button class="modal-close" id="modal-close">&times;</button>
