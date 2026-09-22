@@ -1,12 +1,30 @@
-{% if user.is_authenticated %}
-<p>Connecté en tant que {{ user.username }}</p>
-<form method="post" action="{% url 'logout' %}">
-  {% csrf_token %}
-  <button type="submit">Se déconnecter</button>
-</form>
-{% else %}
-<form method="post">
-  {% csrf_token %} {{ form.as_p }}
-  <button type="submit">Se connecter</button>
-</form>
-{% endif %}
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Connexion - Skills Shop</title>
+    <link rel="stylesheet" href="{% static 'skills_shop/style.css' %}" />
+  </head>
+  <body>
+    <div class="auth-page">
+      <div class="auth-card">
+        <a href="{% url 'index' %}" class="auth-back">&larr; Retour</a>
+        <h1>Connexion</h1>
+        {% if user.is_authenticated %}
+        <p>Connecté en tant que {{ user.username }}</p>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit">Se déconnecter</button>
+        </form>
+        {% else %}
+        <form method="post">
+          {% csrf_token %} {{ form.as_p }}
+          <button type="submit">Se connecter</button>
+        </form>
+        <p class="auth-switch">Pas encore de compte ? <a href="{% url 'signup' %}">S'inscrire</a></p>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>

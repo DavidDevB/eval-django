@@ -16,8 +16,11 @@
         <span class="slot-query">{{ slot.slot|date:"d/m/Y H:i" }}</span>
         <p class="slot-query">Asker : {{ slot.user.username }}</p>
         <form method="post" action="{% url 'book_slot' slot.id %}">
-          {% csrf_token %}
+          {% csrf_token %} {%if user.is_authenticated %}
           <button type="submit">Book</button>
+          {% else %}
+          <p class="slot-query">You must be logged in to book a slot.</p>
+          {% endif %}
         </form>
       </li>
       {% empty %}
