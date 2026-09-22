@@ -10,12 +10,12 @@
     <a href="{% url 'index' %}">&larr; Return</a>
     <h1>Slots for "{{ skill_name }}"</h1>
     <ul id="liste-creneaux">
-      {% for slot in slots %}
+      {% for query in queries %}
       <li>
-        <strong>{{ slot.activity }}</strong>
-        <span class="slot-query">{{ slot.slot|date:"d/m/Y H:i" }}</span>
-        <p class="slot-query">Asker : {{ slot.user.username }}</p>
-        <form method="post" action="{% url 'book_slot' slot.id %}">
+        <strong>{{ query.activity }}</strong>
+        <span class="slot-query">{{ query.slot|date:"d/m/Y H:i" }}</span>
+        <p class="slot-query">Asker : {{ query.user.username }}</p>
+        <form method="post" action="{% url 'book_query' query.id %}">
           {% csrf_token %} {%if user.is_authenticated %}
           <button type="submit">Book</button>
           {% else %}
