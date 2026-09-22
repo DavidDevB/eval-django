@@ -2,25 +2,33 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.decorators.http import require_http_methods
-from .forms import QueryForm
+from .forms import QueryForm, SignupForm
 from .models import Query, Skill
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
 
 def signup(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = SignupForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('login')
+            user = form.save()
+            user.skills.set(form.cleaned_data['skills'])
+            login(request, user)
+            return redirect('index')
     else:
-        form = UserCreationForm()
+        form = SignupForm()
     return render(request, 'registration/signup.html', {'form': form})
 
 @require_http_methods(["GET"])
 def index(request):
     skills = Skill.objects.all()
-    contexte = { 'skills': skills, 'available_queries': [] }
+    if request.user.is_authenticated:
+        available_queries = Query.objects.filter(skill__in=request.user.skills.all())
+        user_queries = Query.objects.filter(user=request.user)
+    else:
+        available_queries = []
+        user_queries = []
+    contexte = { 'skills': skills, 'available_queries': available_queries, 'user_queries': user_queries }
     return render(request, 'index.html', contexte)
 
 @login_required
@@ -35,13 +43,14 @@ def creer_demande(request):
 
 @require_http_methods(["GET"])
 def select_skill(request, skill_name):
-    slots = Query.objects.filter(skill__name=skill_name)
-    contexte = {'skill_name': skill_name, 'slots': slots}
+    queries = Query.objects.filter(skill__name=skill_name)
+    contexte = {'skill_name': skill_name, 'queries': queries}
     return render(request, 'slots.html', contexte)
 
+@login_required
 @require_http_methods(["POST"])
-def book_slot(request, slot_id):
-    slot = Query.objects.get(id=slot_id)
-    slot.user = request.user
-    slot.save()
+def book_query(request, query_id):
+    query = Query.objects.get(id=query_id)
+    query.accepted_by = request.user
+    query.save()
     return redirect('index')
