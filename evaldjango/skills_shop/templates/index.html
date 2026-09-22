@@ -12,73 +12,72 @@
       {% if user.is_authenticated %}
       <form method="post" action="{% url 'logout' %}">
         {% csrf_token %}
-        <button type="submit">Se déconnecter</button>
+        <button type="submit">Logout</button>
       </form>
       {% else %}
-      <button><a href="{% url 'login' %}">Se connecter</a></button>
+      <button><a href="{% url 'login' %}">Login</a></button>
       {% endif %}
     </div>
     <div id="border_bottom_title"></div>
     <h2>Skills</h2>
     <ul>
       {% for skill in skills %}
-      <li><a href="{% url 'select_skill' skill %}">{{ skill }}</a></li>
+      <li><a href="{% url 'select_skill' skill.name %}">{{ skill.name }}</a></li>
       {% endfor %}
     </ul>
     {% if user.is_authenticated %}
     <h2>Slots</h2>
     <div id="button-container">
-      <button id="btn-demande">Demander de l'aide</button>
-      <button id="btn-demandes">Demandes</button>
+      <button id="btn-demande">Ask for help</button>
+      <button id="btn-demandes">Queries</button>
     </div>
     {% else %}
     <p id="veuillez">Veuillez vous connecter pour accéder aux fonctionnalités.</p>
     {% endif %}
+
+    <!-- Modale demander de l'aide -->
     <div id="modal-demande" class="modal-overlay hidden">
       <div class="modal">
         <button class="modal-close" id="modal-close">&times;</button>
-        <h2>Demander de l'aide</h2>
+        <h2>Ask for help</h2>
         <form method="post" action="{% url 'creer_demande' %}">
           {% csrf_token %}
-          <label for="activite">Activité</label>
-          <textarea name="activite" id="activite" required></textarea>
-
-          <label for="competence">Compétence recherchée</label>
-          <select name="competence" id="competence">
-            {% for skill in skills_manquantes %}
-            <option value="{{ skill.id }}">{{ skill.nom }}</option>
+          <label for="activity">Activities</label>
+          <textarea name="activity" id="activity" required></textarea>
+          <label for="skill">Skills</label>
+          <select name="skill" id="skill">
+            {% for skill in skills %}
+            <option value="{{ skill.id }}">{{ skill.name }}</option>
             {% endfor %}
           </select>
-
-          <label for="creneau">Créneau</label>
-          <input type="datetime-local" name="creneau" id="creneau" required />
-
-          <button type="submit">Valider</button>
+          <label for="slot">Slots</label>
+          <input type="datetime-local" name="slot" id="slot" required />
+          <button type="submit">Confirm</button>
         </form>
       </div>
     </div>
 
+    <!-- Modale liste des demandes -->
     <div id="modal-liste-demandes" class="modal-overlay hidden">
       <div class="modal modal-large">
         <button class="modal-close" id="modal-close-liste">&times;</button>
-        <h2>Demandes où tu peux aider</h2>
-
+        <h2>Ask for help</h2>
         <ul id="liste-demandes" class="liste-demandes">
-          {% for demande in demandes_disponibles %}
-          <li data-demande-id="{{ demande.id }}">
-            <div class="demande-info">
-              <strong>{{ demande.activite }}</strong>
-              <span class="demande-skill">{{ demande.competence.nom }}</span>
-              <span class="demande-creneau">{{ demande.creneau|date:"d/m/Y H:i" }}</span>
-              <span class="demande-auteur">par {{ demande.utilisateur.username }}</span>
+          {% for query in available_queries %}
+          <li data-query-id="{{ query.id }}">
+            <div class="query-info">
+              <strong>{{ query.activity }}</strong>
+              <span class="query-skill">{{ query.skill.name }}</span>
+              <span class="query-slot">{{ query.slot|date:"d/m/Y H:i" }}</span>
+              <span class="query-auteur">par {{ query.utilisateur.username }}</span>
             </div>
-            <form method="post" action="{% url 'se_rendre_disponible' demande.id %}" class="form-dispo">
+            <form method="post" action="{% url 'se_rendre_disponible' query.id %}" class="form-dispo">
               {% csrf_token %}
-              <button type="submit">Je suis dispo</button>
+              <button type="submit">I'm available</button>
             </form>
           </li>
           {% empty %}
-          <li class="liste-vide">Aucune demande correspondant à tes compétences pour le moment.</li>
+          <li class="liste-vide">No queries matching your skills at the moment.</li>
           {% endfor %}
         </ul>
       </div>
