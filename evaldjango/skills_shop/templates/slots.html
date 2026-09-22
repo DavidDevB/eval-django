@@ -3,20 +3,25 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <title>Créneaux - {{ skill_name }}</title>
+    <title>Slots - {{ skill_name }}</title>
     <link rel="stylesheet" href="{% static 'skills_shop/style.css' %}" />
   </head>
   <body>
-    <a href="{% url 'index' %}">&larr; Retour</a>
-    <h1>Créneaux pour "{{ skill_name }}"</h1>
+    <a href="{% url 'index' %}">&larr; Return</a>
+    <h1>Slots for "{{ skill_name }}"</h1>
     <ul id="liste-creneaux">
       {% for slot in slots %}
       <li>
         <strong>{{ slot.activity }}</strong>
-        <span class="demande-creneau">{{ slot.slot|date:"d/m/Y H:i" }}</span>
+        <span class="slot-query">{{ slot.slot|date:"d/m/Y H:i" }}</span>
+        <p class="slot-query">Asker : {{ slot.user.username }}</p>
+        <form method="post" action="{% url 'book_slot' slot.id %}">
+          {% csrf_token %}
+          <button type="submit">Book</button>
+        </form>
       </li>
       {% empty %}
-      <li class="liste-vide">Aucun créneau disponible pour cette compétence pour le moment.</li>
+      <li class="liste-vide">No slots available for this skill at the moment.</li>
       {% endfor %}
     </ul>
   </body>
