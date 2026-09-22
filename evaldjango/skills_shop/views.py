@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.decorators.http import require_http_methods
 from .forms import DemandeForm
-from .models import Demande, Skill
+from .models import Query, Skill
 from django.contrib.auth.decorators import login_required
 
 
@@ -19,12 +19,19 @@ def creer_demande(request):
         form = DemandeForm(request.POST)
         if form.is_valid():
             demande = form.save(commit=False)
-            demande.utilisateur = request.user
+            demande.user = request.user
             demande.save()
     return redirect('index')
 
 @require_http_methods(["GET"])
 def select_skill(request, skill_name):
-    slots = Demande.objects.filter(skill=skill_name)
+    slots = Query.objects.filter(skill__name=skill_name)
     contexte = {'skill_name': skill_name, 'slots': slots}
     return render(request, 'slots.html', contexte)
+
+@require_http_methods(["POST"])
+def book_slot(request, slot_id):
+    slot = Query.objects.get(id=slot_id)
+    slot.user = request.user
+    slot.save()
+    return redirect('index')
