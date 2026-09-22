@@ -30,8 +30,9 @@
     {% if user.is_authenticated %}
     <h2>Slots</h2>
     <div id="button-container">
-      <button id="btn-demande">Ask for help</button>
-      <button id="btn-demandes">Queries</button>
+      <button id="query-btn">Ask for help</button>
+      <button id="queries-btn">Queries</button>
+      <button id="my-queries-btn">My Accepted Queries</button>
     </div>
     {% else %}
     <p id="veuillez">Veuillez vous connecter pour accéder aux fonctionnalités.</p>
@@ -73,13 +74,40 @@
               <span class="query-slot">{{ query.slot|date:"d/m/Y H:i" }}</span>
               <span class="query-auteur">par {{ query.user.username }}</span>
             </div>
-            <form method="post" action="{% url 'se_rendre_disponible' query.id %}" class="form-dispo">
+            <form method="post" action="{% url 'book_query' query.id %}" class="form-dispo">
               {% csrf_token %}
               <button type="submit">I'm available</button>
             </form>
           </li>
           {% empty %}
           <li class="liste-vide">No queries matching your skills at the moment.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <!-- Modale liste de mes demandes acceptées -->
+    <div id="modal-liste-mes-demandes" class="modal-overlay hidden">
+      <div class="modal modal-large">
+        <button class="modal-close" id="modal-close-mes-demandes">&times;</button>
+        <h2>My Queries</h2>
+        <ul id="liste-mes-demandes" class="liste-demandes">
+          {% for query in user_queries %}
+          <li data-query-id="{{ query.id }}">
+            <div class="query-info">
+              <strong>{{ query.activity }}</strong>
+              <span class="query-skill">{{ query.skill.name }}</span>
+              <span class="query-slot">{{ query.slot|date:"d/m/Y H:i" }}</span>
+              <span class="query-auteur">par {{ query.user.username }}</span>
+            </div>
+            {% if query.is_accepted %}
+            <p class="query-accepted">Accepted by {{ query.accepted_by.username }}</p>
+            {% else %}
+            <p class="query-pending">Pending acceptance</p>
+            {% endif %}
+          </li>
+          {% empty %}
+          <li class="liste-vide">You have no queries at the moment.</li>
           {% endfor %}
         </ul>
       </div>
@@ -94,8 +122,9 @@
         closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
       }
 
-      setupModal("btn-demande", "modal-demande", "modal-close");
-      setupModal("btn-demandes", "modal-liste-demandes", "modal-close-liste");
+      setupModal("query-btn", "modal-demande", "modal-close");
+      setupModal("queries-btn", "modal-liste-demandes", "modal-close-liste");
+      setupModal("my-queries-btn", "modal-liste-mes-demandes", "modal-close-mes-demandes");
     </script>
   </body>
 </html>
