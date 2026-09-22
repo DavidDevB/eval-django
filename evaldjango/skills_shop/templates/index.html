@@ -69,7 +69,7 @@
               <strong>{{ query.activity }}</strong>
               <span class="query-skill">{{ query.skill.name }}</span>
               <span class="query-slot">{{ query.slot|date:"d/m/Y H:i" }}</span>
-              <span class="query-auteur">par {{ query.utilisateur.username }}</span>
+              <span class="query-auteur">par {{ query.user.username }}</span>
             </div>
             <form method="post" action="{% url 'se_rendre_disponible' query.id %}" class="form-dispo">
               {% csrf_token %}
