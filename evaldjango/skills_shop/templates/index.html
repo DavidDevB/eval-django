@@ -3,15 +3,19 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <title>{{ titre_page }}</title>
+    <title>Skills Shop</title>
     <link rel="stylesheet" href="{% static 'skills_shop/style.css' %}" />
   </head>
   <body>
-    <h1>{{titre_page}}</h1>
+    <div id="title_login_div">
+      <h1>Skills Shop</h1>
+      <button><a href="{% url 'login' %}">Se connecter</a></button>
+    </div>
+    <div id="border_bottom_title"></div>
     <h2>Skills</h2>
     <ul>
       {% for skill in skills %}
-      <li>{{ skill }}</li>
+      <li><a href="{% url 'select_skill' skill %}">{{ skill }}</a></li>
       {% endfor %}
     </ul>
     <h2>Slots</h2>
