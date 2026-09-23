@@ -64,7 +64,7 @@
     <div id="modal-liste-demandes" class="modal-overlay hidden">
       <div class="modal modal-large">
         <button class="modal-close" id="modal-close-liste">&times;</button>
-        <h2>Ask for help</h2>
+        <h2>Queries available</h2>
         <ul id="liste-demandes" class="liste-demandes">
           {% for query in available_queries %}
           <li data-query-id="{{ query.id }}">
@@ -90,9 +90,9 @@
     <div id="modal-liste-mes-demandes" class="modal-overlay hidden">
       <div class="modal modal-large">
         <button class="modal-close" id="modal-close-mes-demandes">&times;</button>
-        <h2>My Queries</h2>
+        <h2>My Accepted Queries</h2>
         <ul id="liste-mes-demandes" class="liste-demandes">
-          {% for query in user_queries %}
+          {% for query in accepted_queries %}
           <li data-query-id="{{ query.id }}">
             <div class="query-info">
               <strong>{{ query.activity }}</strong>
@@ -100,14 +100,9 @@
               <span class="query-slot">{{ query.slot|date:"d/m/Y H:i" }}</span>
               <span class="query-auteur">par {{ query.user.username }}</span>
             </div>
-            {% if query.is_accepted %}
-            <p class="query-accepted">Accepted by {{ query.accepted_by.username }}</p>
-            {% else %}
-            <p class="query-pending">Pending acceptance</p>
-            {% endif %}
           </li>
           {% empty %}
-          <li class="liste-vide">You have no queries at the moment.</li>
+          <li class="liste-vide">You haven't accepted any queries yet.</li>
           {% endfor %}
         </ul>
       </div>
